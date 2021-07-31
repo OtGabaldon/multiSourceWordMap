@@ -6,13 +6,12 @@ def main():
     args = get_args().parse_args()
     if(args.sub_command == "config"):
         configEditor = ConfigEditor()
-        print(configEditor.config)
         if(args.config_sub_command == "add"):
             configEditor.add_to_config(args)
         elif(args.config_sub_command == "remove"):
-            print(f"Removing {args.source} from {args.ticker} folder")
+            configEditor.remove_from_config(args)
         elif(args.config_sub_command == "list"):
-            print("Listing config")
+            configEditor.list_config(args)
     elif(args.sub_command == "make"):
         if(args.source):
             print(f"Making wordmap from {args.source}")

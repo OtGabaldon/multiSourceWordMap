@@ -1,4 +1,21 @@
 import setuptools
+from setuptools import setup
+from setuptools.command.install import install
+from distutils.command.build_py import build_py
+import os
+from multiSourceWordMap.configEditor import ConfigEditor
+
+class InstallReadsScriptDir(install):
+    def run(self):
+        self.distribution._x_script_dir = self.install_scripts
+        install.run(self)
+
+class BuildConfiguresScriptDir(build_py):
+    def run(self):
+        build_py.run(self)
+        if self.dry_run:
+            return
+        configEditor = ConfigEditor(os.path.realpath(__file__))
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
@@ -30,5 +47,9 @@ setuptools.setup(
         'console_scripts': [
             'map = multiSourceWordMap.wordMapCreator:main'
         ]
+    },
+        cmdclass= {
+        'install': InstallReadsScriptDir,
+        'build_py': BuildConfiguresScriptDir,
     }
 )
