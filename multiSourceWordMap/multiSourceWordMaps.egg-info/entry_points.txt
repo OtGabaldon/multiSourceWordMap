@@ -1,3 +1,0 @@
-[console_scripts]
-map = multiSourceWordMap.wordMapCreator:main
-
