@@ -4,6 +4,7 @@ from setuptools.command.install import install
 from distutils.command.build_py import build_py
 import os
 from multiSourceWordMap.configEditor import ConfigEditor
+import sys
 
 class InstallReadsScriptDir(install):
     def run(self):
@@ -15,7 +16,17 @@ class BuildConfiguresScriptDir(build_py):
         build_py.run(self)
         if self.dry_run:
             return
-        configEditor = ConfigEditor(os.path.realpath(__file__))
+        build_package = f"python{sys.version_info.major}.{sys.version_info.minor}/dist-packages"
+        for path in sys.path:
+            if build_package in path and f"{build_package}/" not in path:
+                ConfigEditor(
+                    package_path= os.path.realpath(__file__),
+                    dist_dir = path
+                )
+                return
+        
+        raise BaseException("Could not find distribution package to place config file in.")
+        
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()

@@ -5,17 +5,25 @@ import shutil
 
 class ConfigEditor:
 
-    def __init__(self, setup_dir = None):
+    def __init__(self, package_path = None, dist_dir = None):
         try:
-            self.config = self.get_config()
-            if setup_dir:
-                setup_dir_array = setup_dir.split('/')
-                setup_dir_array.pop() #remove setup.py file
-                base_dir = '/'.join(setup_dir_array)
-                self.config['base_dir'] = base_dir 
-            if "sources" not in self.config:
-                self.config["sources"] = {}
-            self.write_config()
+            if dist_dir:
+                config_path = f"{dist_dir}/multiSourceWordMap/config.json"
+                if os.path.exists(config_path):
+                    with open(config_path, "r") as config_file:
+                        config = json.load(config_file)
+                    config["package_dir"] = '/'.join(package_path.split('/')[:-1])
+                else:
+                    config = {
+                        "package_dir": '/'.join(package_path.split('/')[:-1]),
+                        "sources": {}
+                    }
+                with open(config_path, "w+") as config_file:
+                    config_file.write(json.dumps(config))
+                self.config = config
+            else:
+                self.config = self.get_config()
+
         except FileNotFoundError:
             raise BaseException (f"Config file not found.")
 
@@ -33,13 +41,12 @@ class ConfigEditor:
         sources[ticker].append(source)
         self.config["sources"] = sources
 
-        base_dir = self.config["base_dir"]
+        package_dir = self.config["package_dir"]
         if location:
             if self.is_website(location):
                 raise BaseException("Can not specify location for website.")
-                return
 
-            pdf_path = f"{base_dir}/PDFs/{ticker}/{source}"
+            pdf_path = f"{package_dir}/PDFs/{ticker}/{source}"
             mkdir_path = pdf_path.split("/")[-1]
             dest_no_file = "/".join(mkdir_path)
             os.makedirs(dest_no_file)
@@ -59,15 +66,16 @@ class ConfigEditor:
             if source in sources[ticker]:
                 sources[ticker].remove(source)
                 if not self.is_website(source):
-                    pdf_path = f"{self.config['base_dir']}/PDFs/{ticker}/{source}"
-                    os.remove(pdf_path)
+                    pdf_path = f"{self.config['package_dir']}/PDFs/{ticker}/{source}"
+                    if os.path.exists(pdf_path):
+                        os.remove(pdf_path)
             else:
                 raise BaseException(f"{source} not in {ticker}")
         else:
             raise BaseException(f"{ticker} not in sources")
         self.write_config()
 
-    def list_config(self,args):
+    def list_config(self):
         print("Config:")
         for ticker in self.config["sources"]:
             print(f"\n\t{ticker}:")
@@ -75,16 +83,18 @@ class ConfigEditor:
                 print(f"\n\t   {source}")
 
     def get_config(self):
-        print(os.path.realpath(__file__))
-        print(os.getcwd())
+        config_editor_path = os.path.realpath(__file__)
+        config_path = '/'.join(config_editor_path.split('/')[:-1]) + '/config.json'
         
-        with open('./config.json','r') as config_file:
+        with open(config_path,'r') as config_file:
             config = json.load(config_file)
 
         return config
 
     def write_config(self, config = None):
-        with open('./config.json','w+') as config_file:
+        config_editor_path = os.path.realpath(__file__)
+        config_path = '/'.join(config_editor_path.split('/')[:-1]) + '/config.json'
+        with open(config_path,'w') as config_file:
             if not config:
                 config_file.write(json.dumps(self.config)) 
             else:

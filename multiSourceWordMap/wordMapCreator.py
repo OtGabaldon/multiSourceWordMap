@@ -11,7 +11,7 @@ def main():
         elif(args.config_sub_command == "remove"):
             configEditor.remove_from_config(args)
         elif(args.config_sub_command == "list"):
-            configEditor.list_config(args)
+            configEditor.list_config()
     elif(args.sub_command == "make"):
         if(args.source):
             print(f"Making wordmap from {args.source}")
