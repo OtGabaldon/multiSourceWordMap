@@ -1,2 +1,4 @@
 PyPDF2
 wordcloud
+bs4
+requests

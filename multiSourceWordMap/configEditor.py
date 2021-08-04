@@ -1,7 +1,7 @@
 import os
 import json
 import shutil
-
+from multiSourceWordMap.utils import is_website
 
 class ConfigEditor:
 
@@ -43,7 +43,7 @@ class ConfigEditor:
 
         package_dir = self.config["package_dir"]
         if location:
-            if self.is_website(location):
+            if is_website(location):
                 raise BaseException("Can not specify location for website.")
 
             pdf_path = f"{package_dir}/PDFs/{ticker}/{source}"
@@ -65,7 +65,7 @@ class ConfigEditor:
         if ticker in sources:
             if source in sources[ticker]:
                 sources[ticker].remove(source)
-                if not self.is_website(source):
+                if not is_website(source):
                     pdf_path = f"{self.config['package_dir']}/PDFs/{ticker}/{source}"
                     if os.path.exists(pdf_path):
                         os.remove(pdf_path)
@@ -100,6 +100,4 @@ class ConfigEditor:
             else:
                 config_file.write(json.dumps(config))
 
-    def is_website(self,location):
-        return len(location.split("www.")) > 1
             
