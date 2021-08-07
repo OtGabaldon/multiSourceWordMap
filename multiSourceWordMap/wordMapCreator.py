@@ -2,9 +2,10 @@ from multiSourceWordMap.configEditor import ConfigEditor
 from multiSourceWordMap.extractor import Extractor
 from multiSourceWordMap.makeWordMap import MapCreator
 from multiSourceWordMap.getArgs import get_args
+import os
+import json
 
 def main():
-    print("In Main")
     args = get_args().parse_args()
     if(args.sub_command == "config"):
         configEditor = ConfigEditor()

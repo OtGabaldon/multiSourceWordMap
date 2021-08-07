@@ -4,20 +4,15 @@ import shutil
 from multiSourceWordMap.utils import is_website
 
 class ConfigEditor:
-
-    def __init__(self, package_path = None, dist_dir = None):
+    
+    def __init__(self, package_path = None):
         try:
-            if dist_dir:
-                config_path = f"{dist_dir}/multiSourceWordMap/config.json"
-                if os.path.exists(config_path):
-                    with open(config_path, "r") as config_file:
-                        config = json.load(config_file)
-                    config["package_dir"] = '/'.join(package_path.split('/')[:-1])
-                else:
-                    config = {
-                        "package_dir": '/'.join(package_path.split('/')[:-1]),
-                        "sources": {}
-                    }
+            if package_path:
+                dist_dir = self.get_dist_dir()
+                config_path = f"{dist_dir}/config.py"
+                with open(config_path, "r") as config_file:
+                    config = json.load(config_file)
+                config["package_dir"] = package_path
                 with open(config_path, "w+") as config_file:
                     config_file.write(json.dumps(config))
                 self.config = config
@@ -25,7 +20,7 @@ class ConfigEditor:
                 self.config = self.get_config()
 
         except FileNotFoundError:
-            raise BaseException (f"Config file not found.")
+            raise FileNotFoundError (f"Config file not found.")
 
     def add_to_config(self,args):
         ticker,location,source = args.ticker,args.location,args.source
@@ -43,19 +38,19 @@ class ConfigEditor:
 
         package_dir = self.config["package_dir"]
         if location:
-            if is_website(location):
+            if not os.path.exists(location):
+                raise FileNotFoundError(f"Could not find file at : {location}. Did not add to config.")
+            if is_website(source):
                 raise BaseException("Can not specify location for website.")
-
+            print(f"Package dir {package_dir}")
             pdf_path = f"{package_dir}/PDFs/{ticker}/{source}"
-            mkdir_path = pdf_path.split("/")[-1]
+            mkdir_path = pdf_path.split("/")[:-1]
             dest_no_file = "/".join(mkdir_path)
-            os.makedirs(dest_no_file)
+            os.makedirs(dest_no_file, exist_ok = True)
+            shutil.copyfile(location,pdf_path)
+            print(f"Copying file \nFrom:{location} \nTo:{pdf_path}")
 
-            try:
-                shutil.copyfile(location,pdf_path)
-                print(f"Copying file \nFrom:{location} \nTo:{pdf_path}")
-            except FileNotFoundError as e:
-                print(f"Could not find file at :{location}. Did not add to config.")
+                
         self.write_config(self.config)
 
     def remove_from_config(self, args):
@@ -65,10 +60,16 @@ class ConfigEditor:
         if ticker in sources:
             if source in sources[ticker]:
                 sources[ticker].remove(source)
+                if sources[ticker] == []:
+                    del sources[ticker]
                 if not is_website(source):
                     pdf_path = f"{self.config['package_dir']}/PDFs/{ticker}/{source}"
                     if os.path.exists(pdf_path):
                         os.remove(pdf_path)
+                        if len(os.listdir(os.path.dirname(pdf_path))) == 0:
+                            print(os.path.dirname(pdf_path))
+                            os.rmdir(os.path.dirname(pdf_path))
+
             else:
                 raise BaseException(f"{source} not in {ticker}")
         else:
@@ -83,21 +84,22 @@ class ConfigEditor:
                 print(f"\n\t   {source}")
 
     def get_config(self):
-        config_editor_path = os.path.realpath(__file__)
-        config_path = '/'.join(config_editor_path.split('/')[:-1]) + '/config.json'
-        
+        config_path = f"{self.get_dist_dir()}/config.py"
         with open(config_path,'r') as config_file:
             config = json.load(config_file)
 
         return config
 
     def write_config(self, config = None):
-        config_editor_path = os.path.realpath(__file__)
-        config_path = '/'.join(config_editor_path.split('/')[:-1]) + '/config.json'
+        config_path = f"{self.get_dist_dir()}/config.py"
         with open(config_path,'w') as config_file:
             if not config:
                 config_file.write(json.dumps(self.config)) 
             else:
                 config_file.write(json.dumps(config))
+
+    #Makes mocking for tests easier.
+    def get_dist_dir(self):
+        return os.path.dirname(os.path.abspath(__file__))
 
             

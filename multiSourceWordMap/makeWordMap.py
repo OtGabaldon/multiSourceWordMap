@@ -20,8 +20,6 @@ class MapCreator:
             self.ticker,
             self.source
         )
-        print(text_path)
-        print(png_path)
         self.makeWordMap(text_path, png_path)
         return
 
@@ -31,3 +29,4 @@ class MapCreator:
         wordcloud = WordCloud().generate(text)
         wordcloudImage = wordcloud.to_image()
         wordcloudImage.save(png_path)
+        print(f"Creating map: {png_path}")

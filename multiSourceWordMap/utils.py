@@ -6,7 +6,7 @@ def create_text_file_path(package_dir, ticker, source):
     text_file_path = f"{package_dir}/text/{ticker}/{file}"
     ticker_path = f"{package_dir}/text/{ticker}"
     if not os.path.exists(ticker_path):
-        os.mkdir(ticker_path)
+        os.makedirs(ticker_path, exist_ok = True)
     return text_file_path
 
 def create_png_file_path(package_dir, ticker, source):
@@ -15,7 +15,16 @@ def create_png_file_path(package_dir, ticker, source):
     text_file_path = f"{package_dir}/maps/{ticker}/{file}"
     ticker_path = f"{package_dir}/maps/{ticker}"
     if not os.path.exists(ticker_path):
-        os.mkdir(ticker_path)
+        os.makedirs(ticker_path, exist_ok = True)
+    return text_file_path
+
+def create_pdf_file_path(package_dir, ticker, source):
+    source_name = get_source_name(source)
+    file = f"{source_name}.pdf"
+    text_file_path = f"{package_dir}/PDFs/{ticker}/{file}"
+    ticker_path = f"{package_dir}/PDFs/{ticker}"
+    if not os.path.exists(ticker_path,):
+        os.makedirs(ticker_path, exist_ok = True)
     return text_file_path
 
 def get_source_name(source):

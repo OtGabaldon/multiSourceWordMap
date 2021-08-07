@@ -16,16 +16,9 @@ class BuildConfiguresScriptDir(build_py):
         build_py.run(self)
         if self.dry_run:
             return
-        build_package = f"python{sys.version_info.major}.{sys.version_info.minor}/dist-packages"
-        for path in sys.path:
-            if build_package in path and f"{build_package}/" not in path:
-                ConfigEditor(
-                    package_path= os.path.realpath(__file__),
-                    dist_dir = path
-                )
-                return
-        
-        raise BaseException("Could not find distribution package to place config file in.")
+        ConfigEditor(
+            package_path= os.path.realpath(__file__)[:-1]
+        )
         
 
 with open("README.md", "r", encoding="utf-8") as fh:
