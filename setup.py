@@ -6,11 +6,6 @@ import os
 from multiSourceWordMap.configEditor import ConfigEditor
 import sys
 
-class InstallReadsScriptDir(install):
-    def run(self):
-        self.distribution._x_script_dir = self.install_scripts
-        install.run(self)
-
 class BuildConfiguresScriptDir(build_py):
     def run(self):
         build_py.run(self)
@@ -53,7 +48,6 @@ setuptools.setup(
         ]
     },
         cmdclass= {
-        'install': InstallReadsScriptDir,
         'build_py': BuildConfiguresScriptDir,
     }
 )

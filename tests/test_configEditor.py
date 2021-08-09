@@ -2,11 +2,9 @@ from multiSourceWordMap.configEditor import ConfigEditor
 from unittest.mock import patch
 import os
 import unittest
+from mock_args import MockArgs
 
 class TestConfigEditor(unittest.TestCase):
-
-   
-        
 
     def setUp(self):
         with open(f"{os.path.dirname(os.path.abspath(__file__))}/test_data/config.py", 'w+') as config:
@@ -115,12 +113,5 @@ class TestConfigEditor(unittest.TestCase):
         configEditor.add_to_config(args)
         configEditor.list_config()
         assert True
-
-class MockArgs():
-
-    def __init__(self,ticker = None , source = None, location = None):
-        self.ticker = ticker
-        self.source = source
-        self.location = location
 
 

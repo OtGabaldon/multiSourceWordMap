@@ -1,5 +1,6 @@
-import PyPDF2
+from pdfminer.high_level import extract_text
 import requests
+import re
 from bs4 import BeautifulSoup
 from multiSourceWordMap.configEditor import ConfigEditor
 from multiSourceWordMap.utils import create_text_file_path, create_pdf_file_path, is_website
@@ -30,14 +31,11 @@ class Extractor:
             self.ticker,
             self.source
         )
-        pdfFile = open(pdf_path,"rb")
         print(f"Opening PDF: {pdf_path}")
-        pdfReader = PyPDF2.PdfFileReader(pdfFile, strict=False)
-        numPages = pdfReader.getNumPages()
-        text = ""
-        for pageNum in range(numPages):
-            page = pdfReader.getPage(pageNum)
-            text += page.extractText()
+        form_feed = re.compile('')
+        non_alpha_numeric = re.compile('[^a-zA-Z ]')
+        text = form_feed.sub('', extract_text(pdf_path))
+        filtered_text = non_alpha_numeric.sub('', text)
         outPath = create_text_file_path(
                 self.config["package_dir"],
                 self.ticker,
@@ -45,14 +43,13 @@ class Extractor:
             )
         textOutFile = open(outPath,"w+")
         print(f"Writing to text file: {outPath}")
-        textOutFile.write(text)
-        pdfFile.close()
+        textOutFile.write(filtered_text)
         textOutFile.close()
 
     def extract_from_website_to_text(self):
         doc = requests.get(self.source).text
         outPath = create_text_file_path(
-            self.config["pakcage_dir"],
+            self.config["package_dir"],
             self.ticker,
             self.source
         )
