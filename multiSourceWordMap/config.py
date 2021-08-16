@@ -1,1 +1,1 @@
-{"package_dir": "/mnt/c/Users/Ot/Desktop/Ticker Symbol You/multiSourceWordMap/setup.p", "sources": {}}
+{"package_dir": "", "sources": {}}

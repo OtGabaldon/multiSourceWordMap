@@ -53,9 +53,24 @@ class Extractor:
             self.ticker,
             self.source
         )
+        self.parse_text_from_html(doc)
         textOutFile = open(outPath,"w+")
-        textOutFile.write(doc)
+        textOutFile.write(self.parse_text_from_html(doc))
         textOutFile.close()
+
+    def parse_text_from_html(self, doc):
+        soup = BeautifulSoup(doc, features="html.parser")
+        p_tags = soup.find_all('p')
+        h_tags = soup.find_all(re.compile('^h[1-6]$'))
+        all_text  = []
+        for p_tag in p_tags:
+            all_text.append(p_tag.text)
+        for h_tag in h_tags:
+            all_text.append(h_tag.text)
+
+        return " ".join(all_text)
+
+
 
 
 

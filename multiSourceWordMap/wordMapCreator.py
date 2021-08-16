@@ -25,7 +25,7 @@ def main():
         else:
             print(f"Making wordmap for {args.ticker}")
             extractor.pull_text_for_ticker()
-            #makeMap.make_map_from_ticker()
+            makeMap.make_map_from_ticker()
             
 
 if __name__ == "__main__":

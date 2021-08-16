@@ -11,8 +11,11 @@ class BuildConfiguresScriptDir(build_py):
         build_py.run(self)
         if self.dry_run:
             return
+
+        current_dir = os.path.realpath(__file__)
+        package_dir = current_dir.split('/')[:-1]
         ConfigEditor(
-            package_path= os.path.realpath(__file__)[:-1]
+            package_path= '/'.join(package_dir)
         )
         
 
@@ -47,7 +50,7 @@ setuptools.setup(
             'map = multiSourceWordMap.wordMapCreator:main'
         ]
     },
-        cmdclass= {
+    cmdclass= {
         'build_py': BuildConfiguresScriptDir,
     }
 )

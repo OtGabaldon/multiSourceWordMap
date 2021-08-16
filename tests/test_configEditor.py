@@ -45,7 +45,7 @@ class TestConfigEditor(unittest.TestCase):
     def test_add_without_location_pdf(self, mock_get_dist_dir):
         args = MockArgs("SQ","testFile.pdf")
         mock_get_dist_dir.return_value = self.dist_dir
-        configEditor = ConfigEditor()
+        configEditor = ConfigEditor(self.dist_dir)
         configEditor.add_to_config(args)
         assert configEditor.config["sources"]["SQ"] == ["testFile.pdf"]
         configEditor.add_to_config(args)
@@ -85,7 +85,7 @@ class TestConfigEditor(unittest.TestCase):
     def test_remove_not_in_sources(self, mock_get_dist_dir):
         args = MockArgs("SQ","testFile.pdf")
         mock_get_dist_dir.return_value = self.dist_dir
-        configEditor = ConfigEditor()
+        configEditor = ConfigEditor(self.dist_dir)
         with self.assertRaises(BaseException):
             configEditor.remove_from_config(args)
         configEditor.add_to_config(args)
