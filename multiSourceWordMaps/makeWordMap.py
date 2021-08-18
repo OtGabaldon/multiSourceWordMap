@@ -1,6 +1,6 @@
 from wordcloud import WordCloud
-from multiSourceWordMap.configEditor import ConfigEditor
-from multiSourceWordMap.utils import create_png_file_path, create_text_file_path
+from multiSourceWordMaps.configEditor import ConfigEditor
+from multiSourceWordMaps.utils import create_png_file_path, create_text_file_path
 
 class MapCreator:
 
@@ -17,12 +17,12 @@ class MapCreator:
 
     def make_map_from_text(self):
         text_path = create_text_file_path(
-            self.config["package_dir"],
+            self.config["data_dir"],
             self.ticker,
             self.source
         )
         png_path = create_png_file_path(
-            self.config["package_dir"],
+            self.config["data_dir"],
             self.ticker,
             self.source
         )

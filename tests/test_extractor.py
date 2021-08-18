@@ -1,4 +1,4 @@
-from multiSourceWordMap.extractor import Extractor
+from multiSourceWordMaps.extractor import Extractor
 from unittest.mock import patch
 import os
 import unittest
@@ -12,7 +12,8 @@ def mocked_requests_get(*args, **kwargs):
             self.text = text_data
             self.status_code = status_code
 
-    test_website_path = f"{os.path.dirname(os.path.abspath(__file__))}/test_data/test_website/{args[0]}"
+    source_no_http = args[0].replace("http://","")
+    test_website_path = f"{os.path.dirname(os.path.abspath(__file__))}/test_data/test_website/{source_no_http}"
     with open(test_website_path,'r') as website_file:
         data = website_file.read()
     
@@ -20,9 +21,9 @@ def mocked_requests_get(*args, **kwargs):
 
 class TestExtractor(unittest.TestCase):
     
-    @patch("multiSourceWordMap.extractor.create_text_file_path")
-    @patch("multiSourceWordMap.extractor.create_pdf_file_path")
-    @patch("multiSourceWordMap.extractor.ConfigEditor")
+    @patch("multiSourceWordMaps.extractor.create_text_file_path")
+    @patch("multiSourceWordMaps.extractor.create_pdf_file_path")
+    @patch("multiSourceWordMaps.extractor.ConfigEditor")
     def test_pulling_text_from_pdf(self, mock_config_editor, mock_create_pdf_file_path, mock_create_text_file_path):
         mock_config_editor.return_value = MockConfigEditor(
             {
@@ -44,9 +45,9 @@ class TestExtractor(unittest.TestCase):
         assert test_text == "This is a test pdf with  character With periods and  weird chars"
         os.remove(test_text_file)
 
-    @patch("multiSourceWordMap.extractor.create_text_file_path")
-    @patch("multiSourceWordMap.extractor.requests.get", side_effect=mocked_requests_get)
-    @patch("multiSourceWordMap.extractor.ConfigEditor")
+    @patch("multiSourceWordMaps.extractor.create_text_file_path")
+    @patch("multiSourceWordMaps.extractor.requests.get", side_effect=mocked_requests_get)
+    @patch("multiSourceWordMaps.extractor.ConfigEditor")
     def test_pulling_text_from_website(self, mock_config_editor, mock_requests_get, mock_create_text_file_path):
         test_site_text = """<body>
     <h1>This is a header</h1>

@@ -2,8 +2,8 @@ from pdfminer.high_level import extract_text
 import requests
 import re
 from bs4 import BeautifulSoup
-from multiSourceWordMap.configEditor import ConfigEditor
-from multiSourceWordMap.utils import create_text_file_path, create_pdf_file_path, is_website
+from multiSourceWordMaps.configEditor import ConfigEditor
+from multiSourceWordMaps.utils import create_text_file_path, create_pdf_file_path, is_website
 
 class Extractor:
 
@@ -27,7 +27,7 @@ class Extractor:
             
     def extract_from_pdf_to_text(self):
         pdf_path = create_pdf_file_path(
-            self.config["package_dir"],
+            self.config["data_dir"],
             self.ticker,
             self.source
         )
@@ -37,7 +37,7 @@ class Extractor:
         text = form_feed.sub('', extract_text(pdf_path))
         filtered_text = non_alpha_numeric.sub('', text)
         outPath = create_text_file_path(
-                self.config["package_dir"],
+                self.config["data_dir"],
                 self.ticker,
                 self.source
             )
@@ -47,14 +47,18 @@ class Extractor:
         textOutFile.close()
 
     def extract_from_website_to_text(self):
-        doc = requests.get(self.source).text
+        url = self.source
+        if (len(url.split("http")) <= 1):
+            url = f"http://{url}"
+        doc = requests.get(url).text
         outPath = create_text_file_path(
-            self.config["package_dir"],
+            self.config["data_dir"],
             self.ticker,
             self.source
         )
         self.parse_text_from_html(doc)
         textOutFile = open(outPath,"w+")
+        print(f"Writing to text file: {outPath}")
         textOutFile.write(self.parse_text_from_html(doc))
         textOutFile.close()
 

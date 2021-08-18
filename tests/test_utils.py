@@ -1,4 +1,4 @@
-from multiSourceWordMap.utils import *
+from multiSourceWordMaps.utils import *
 import unittest
 import os
 

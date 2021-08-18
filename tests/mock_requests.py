@@ -1,3 +1,4 @@
+import os
 
 class MockRequests:
 
@@ -5,7 +6,8 @@ class MockRequests:
         return
 
     def get(self, source):
-        test_website_path = f"{os.path.dirname(os.path.abspath(__file__))}/test_data/test_website/{source}"
+        source_no_http = source.replace("http://","")
+        test_website_path = f"{os.path.dirname(os.path.abspath(__file__))}/test_data/test_website/{source_no_http}"
         with open(test_website_path,'r') as website_file:
             return MockData(website_file.read())
         

@@ -1,4 +1,4 @@
-from multiSourceWordMap.makeWordMap import MapCreator
+from multiSourceWordMaps.makeWordMap import MapCreator
 import unittest
 
 class TestMakeWordMap(unittest.TestCase):

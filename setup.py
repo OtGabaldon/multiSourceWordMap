@@ -1,41 +1,22 @@
 import setuptools
-from setuptools import setup
-from setuptools.command.install import install
 from distutils.command.build_py import build_py
 import os
-from multiSourceWordMap.configEditor import ConfigEditor
-import sys
-
-class BuildConfiguresScriptDir(build_py):
-    def run(self):
-        build_py.run(self)
-        if self.dry_run:
-            return
-
-        current_dir = os.path.realpath(__file__)
-        package_dir = current_dir.split('/')[:-1]
-        ConfigEditor(
-            package_path= '/'.join(package_dir)
-        )
+import json
         
-
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
-with open("requirements.txt", "r", encoding="utf-8") as f:
-    requirements = f.readlines()
-
 setuptools.setup(
     name="multiSourceWordMaps",
-    version="0.0.4",
+    version="1.0.0",
     author="Ot Gabaldon Torrents",
     author_email="gabaldonot@gmail.com",
     description="Allows the user to list sources and compile word maps from those sources",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://www.thisiswhy.biz",
+    url="https://github.com/OtGabaldon/multiSourceWordMaps",
     project_urls={
-        "Bug Tracker": "https://www.thisiswhy.biz",
+        "Bug Tracker": "https://github.com/OtGabaldon/multiSourceWordMaps/issues",
     },
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -44,13 +25,17 @@ setuptools.setup(
     ],
     packages=setuptools.find_packages(),
     python_requires=">=3.6",
-    install_requires = requirements,
+    install_requires = [
+        "pdfminer.six",
+        "wordcloud",
+        "bs4",
+        "requests",
+        "pytest",
+        "pytest-cov"
+    ],
     entry_points= {
         'console_scripts': [
-            'map = multiSourceWordMap.wordMapCreator:main'
+            'map = multiSourceWordMaps.wordMapCreator:main'
         ]
-    },
-    cmdclass= {
-        'build_py': BuildConfiguresScriptDir,
     }
 )

@@ -1,6 +1,0 @@
-pdfminer.six
-wordcloud
-bs4
-requests
-pytest
-pytest-cov

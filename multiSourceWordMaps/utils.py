@@ -29,7 +29,7 @@ def create_pdf_file_path(package_dir, ticker, source):
 
 def get_source_name(source):
     if is_website(source):
-        source = "".join(source.split("/"))
+        source = source.replace("/","-").replace(":","").replace(".","-")
         return source
     else:
         file = source.split("/")[-1]

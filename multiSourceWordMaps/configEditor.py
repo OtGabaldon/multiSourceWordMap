@@ -1,26 +1,18 @@
 import os
+import re
+import sys
 import json
 import shutil
-from multiSourceWordMap.utils import is_website, create_pdf_file_path
+import getpass
+from multiSourceWordMaps.utils import is_website, create_pdf_file_path
 
 class ConfigEditor:
     
-    def __init__(self, package_path = None):
-        try:
-            if package_path:
-                dist_dir = self.get_dist_dir()
-                config_path = f"{dist_dir}/config.py"
-                with open(config_path, "r") as config_file:
-                    config = json.load(config_file)
-                config["package_dir"] = package_path
-                with open(config_path, "w+") as config_file:
-                    config_file.write(json.dumps(config))
-                self.config = config
-            else:
-                self.config = self.get_config()
-
-        except FileNotFoundError:
-            raise FileNotFoundError (f"Config file not found.")
+    def __init__(self):
+        self.config = self.get_config()
+        data_dir = self.get_data_dir()
+        self.config["data_dir"] = data_dir
+        self.write_config()
 
     def add_to_config(self,args):
         ticker,location,source = args.ticker,args.location,args.source
@@ -36,15 +28,15 @@ class ConfigEditor:
         sources[ticker].append(source)
         self.config["sources"] = sources
 
-        package_dir = self.config["package_dir"]
+        data_dir = self.config["data_dir"]
         if location:
             if not os.path.exists(location):
                 raise FileNotFoundError(f"Could not find file at : {location}. Did not add to config.")
             if is_website(source):
                 raise BaseException("Can not specify location for website.")
-            print(f"Package dir {package_dir}")
+            print(f"Package dir {data_dir}")
             pdf_path = create_pdf_file_path(
-                        self.config["package_dir"],
+                        self.config["data_dir"],
                         ticker,
                         source
                     )
@@ -65,17 +57,17 @@ class ConfigEditor:
             if source in sources[ticker]:
                 sources[ticker].remove(source)
                 if sources[ticker] == []:
+                    print(f"No files left, removing {ticker} folder from config.")
                     del sources[ticker]
                 if not is_website(source):
                     pdf_path = create_pdf_file_path(
-                        self.config["package_dir"],
+                        self.config["data_dir"],
                         ticker,
                         source
                     )
                     if os.path.exists(pdf_path):
                         os.remove(pdf_path)
                         if len(os.listdir(os.path.dirname(pdf_path))) == 0:
-                            print(f"No files left, removing {ticker} folder from config.")
                             os.rmdir(os.path.dirname(pdf_path))
 
             else:
@@ -100,18 +92,52 @@ class ConfigEditor:
 
     def write_config(self, config = None):
         config_path = f"{self.get_dist_dir()}/config.py"
-        upper_config_path = f"{self.config['package_dir']}/multiSourceWordMap/config.py"
         with open(config_path,'w') as config_file:
-            with open(upper_config_path,'w') as upper_config_file:
-                if not config:
-                    config_file.write(json.dumps(self.config)) 
-                    upper_config_file.write(json.dumps(self.config)) 
-                else:
-                    config_file.write(json.dumps(config))
-                    upper_config_file.write(json.dumps(config))
+            if not config:
+                config_file.write(json.dumps(self.config)) 
+            else:
+                config_file.write(json.dumps(config))
 
     #Makes mocking for tests easier.
     def get_dist_dir(self):
         return os.path.dirname(os.path.abspath(__file__))
 
+    def get_data_dir(self):
+        platform = sys.platform
+        windows_regex = re.compile('win')
+        linux_regex = re.compile('linux')
+        mac_regex = re.compile('darwin')
+        if( windows_regex.search(platform)):
+            return self.get_windows_data_dir()
+        elif(linux_regex.search(platform)):
+            return self.get_linux_data_dir()
+        elif(mac_regex.search(platform)):
+            return self.get_mac_data_dir()
+        else:
+            raise BaseException(f"Platform: {platform} not supported")
+
+    def get_windows_data_dir(self):
+        user = getpass.getuser()
+        windows_path = f"C:/Users/{user}/Documents/multiSourceWordMaps"
+        if not os.path.exists(windows_path):
+            os.mkdir(windows_path)
+        return windows_path
+
+    def get_linux_data_dir(self):
+        user = os.getenv("USER")
+        if user == "root":
+            user = os.getenv("SUDO_USER")
+        linux_path =  f"/home/{user}/Documents/multiSourceWordMaps"
+        if not os.path.exists(linux_path):
+            os.mkdir(linux_path)
+        return linux_path
+    
+    def get_mac_data_dir(self):
+        user = os.getenv("USER")
+        if user == "root":
+            user = os.getenv("SUDO_USER")
+        mac_path = f"/home/{user}/Documents/multiSourceWordMaps"
+        if not os.path.exists(mac_path):
+            os.mkdir(mac_path)
+        return mac_path
             

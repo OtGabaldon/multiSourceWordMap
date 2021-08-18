@@ -1,7 +1,7 @@
-from multiSourceWordMap.configEditor import ConfigEditor
-from multiSourceWordMap.extractor import Extractor
-from multiSourceWordMap.makeWordMap import MapCreator
-from multiSourceWordMap.getArgs import get_args
+from multiSourceWordMaps.configEditor import ConfigEditor
+from multiSourceWordMaps.extractor import Extractor
+from multiSourceWordMaps.makeWordMap import MapCreator
+from multiSourceWordMaps.getArgs import get_args
 import os
 import json
 
