@@ -6,3 +6,5 @@
   * Downloading python will give you a package manager which you will use to download the package
 
 ## Installing MultiSource Word Maps
+* Right click on your desktop and open git bash ![Image](guideImages/GitBash)
+* Run `pip3 install multiSourceWordMaps`. This will install the package on to your computer and give you access to the `map`. ![Image](guideImages/installCommand)
