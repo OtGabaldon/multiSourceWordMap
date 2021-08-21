@@ -12,7 +12,7 @@ def get_args():
     config_subparser = config.add_subparsers(help="Add/Remove/List config", dest="config_sub_command")
     config_add = config_subparser.add_parser('add', help="Add a source to the config")
     config_remove = config_subparser.add_parser('remove', help="Remove a source to the config")
-    config_list = config_subparser.add_parser('list', help="List sources for a ticker")
+    config_list = config_subparser.add_parser('list', help="List entire config")
 
     #setup config add command
     config_add.add_argument('ticker', help="Ticker that you want to add a soruce to")
