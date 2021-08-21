@@ -80,5 +80,5 @@ Each of these directories will contain a folder called `multiSourceWordMaps` wit
 For each command in this program you can append `-h` to see all information and options. A quick overview of the command will be listed below in a tree format. For details on each command use the -h command to get help.
 
 # Future functionality
-[ ] Adding command so you can combine multiple sources into a single file
-[ ] Adding a filter subcommand that will give functionality in filtering words
+- [ ] Adding command so you can combine multiple sources into a single file.  
+- [ ] Adding a filter subcommand that will give functionality in filtering words.  
